@@ -9,7 +9,7 @@ global_weights = numpy.zeros((2*2, 1))
 global_bias = 0
 
 # block variables
-proof = 0
+proof = 100
 block_schema = Schema({'index': int,
                         'timestamp': float,
                         'transactions': list,
@@ -19,46 +19,85 @@ block_schema = Schema({'index': int,
 @pytest.fixture
 def blockchain():
     return Blockchain()
-
+@pytest.fixture
+def blockchain_invalid_chain():
+    b = Blockchain() # init sequence creates initial block
+    b.new_transaction(origin="block", weights=global_weights.tolist(), bias=global_bias)
+    b.new_block(0, b.hash(b.last_block))
+    b.new_transaction(origin="block", weights=global_weights.tolist(), bias=global_bias)
+    b.new_block(0, b.hash(b.last_block))
+    
+    b.new_transaction(origin="block", weights=global_weights.tolist(), bias=global_bias)
+    b.new_block(0, b.hash(b.last_block))
+    
+    b.new_transaction(origin="block", weights=global_weights.tolist(), bias=global_bias)
+    b.new_block(0, b.hash(b.last_block))
+    return b
 @pytest.fixture
 def blockchain_5blocks():
     b = Blockchain() # init sequence creates initial block
     b.new_transaction(origin="block", weights=global_weights.tolist(), bias=global_bias)
-    b.new_block(proof, b.last_block)
-    b.new_block(proof, b.last_block)
-    # b.new_block(proof, b.last_block)
-    # b.new_block(proof, b.last_block)
+    b.new_block(b.proof_of_work(b.last_block), b.hash(b.last_block))
+    b.new_transaction(origin="block", weights=global_weights.tolist(), bias=global_bias)
+    b.new_block(b.proof_of_work(b.last_block), b.hash(b.last_block))
+    
+    b.new_transaction(origin="block", weights=global_weights.tolist(), bias=global_bias)
+    b.new_block(b.proof_of_work(b.last_block), b.hash(b.last_block))
+    
+    b.new_transaction(origin="block", weights=global_weights.tolist(), bias=global_bias)
+    b.new_block(b.proof_of_work(b.last_block), b.hash(b.last_block))
     return b
 
 
-# Test signature verification
 def test_signature_verification(blockchain):
+    """ Test signature verification
+        rubric section(a)
+    """
     pass
 
-# Test block validity
-# rubric section (b)
+
 def test_original_block_validity(blockchain):
+    """ Test block validity
+        rubric section (b)
+    """
     # test that block contains all necessary members
     block = blockchain.chain[-1]
     assert block == block_schema.validate(block)
 
-# Test proof of work
-# rubric section (c)
+
 def test_proof_of_work(blockchain):
+    """ Test proof of work
+        rubric section (c)
+    """
     proof = blockchain.proof_of_work(blockchain.last_block)
     assert proof != None
+    assert isinstance(proof, int)
+    
 
-# 
-def test_conflict_resolution(blockchain, blockchain_5blocks):
+
+def test_conflict_resolution(blockchain, blockchain_5blocks, blockchain_invalid_chain):
     """ Test conflict resolution
         rubric section (d)
     """
-    orig_chain_len = len(blockchain.chain)
-    print(orig_chain_len)
-    print(len(blockchain_5blocks.chain))
+    short_chain_len = len(blockchain.chain)
+    large_chain_len = len(blockchain_5blocks.chain)
+    invalid_chain_len = len(blockchain_invalid_chain.chain)
+    
+    # test with larger, incorrectly formed chain
+    blockchain.resolve_conflicts(blockchain_invalid_chain.chain)
+    assert short_chain_len != invalid_chain_len
+
+    # test with smaller, correctly formed chain
+    blockchain_5blocks.resolve_conflicts(blockchain.chain)
+    assert large_chain_len == len(blockchain_5blocks.chain)
+
+
+    # test with larger, correctly formed incoming chain
     blockchain.resolve_conflicts(blockchain_5blocks.chain)
     updated_chain_len = len(blockchain.chain)
-    print(updated_chain_len)
+    assert updated_chain_len == large_chain_len
+
+    
     
 
 
