@@ -23,7 +23,7 @@ def main():
         generate_private_key(sys.argv[1])
         generate_public_key()
     elif len(sys.argv) == 4:
-        generate_private_key(sys.argv[1], sys.agv[2])
+        generate_private_key(sys.argv[1], sys.argv[2])
         generate_public_key(sys.argv[2], sys.argv[3])
     else:
         generate_private_key()
