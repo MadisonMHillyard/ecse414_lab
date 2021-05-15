@@ -10,5 +10,6 @@ AICN_prototype/logs/PC1/.DS_Store
 AICN_prototype/logs/PC2/.DS_Store
 AICN_prototype/logs/registry/.DS_Store
 AICN_prototype/.DS_Store
-
+AICN_prototype/private.pem
+AICN_prototype/public.pem
 
