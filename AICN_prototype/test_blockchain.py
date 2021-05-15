@@ -36,7 +36,6 @@ def blockchain_5blocks():
     return b
 
 
-# 
 def test_signature_verification(blockchain):
     """ Test signature verification
         rubric section(a)
