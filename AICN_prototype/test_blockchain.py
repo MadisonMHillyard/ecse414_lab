@@ -9,7 +9,7 @@ global_weights = numpy.zeros((2*2, 1))
 global_bias = 0
 
 # block variables
-proof = 0
+proof = 100
 block_schema = Schema({'index': int,
                         'timestamp': float,
                         'transactions': list,
@@ -24,10 +24,15 @@ def blockchain():
 def blockchain_5blocks():
     b = Blockchain() # init sequence creates initial block
     b.new_transaction(origin="block", weights=global_weights.tolist(), bias=global_bias)
-    b.new_block(proof, b.last_block)
-    b.new_block(proof, b.last_block)
-    # b.new_block(proof, b.last_block)
-    # b.new_block(proof, b.last_block)
+    b.new_block(b.proof_of_work(b.last_block), b.hash(b.last_block))
+    b.new_transaction(origin="block", weights=global_weights.tolist(), bias=global_bias)
+    b.new_block(b.proof_of_work(b.last_block), b.hash(b.last_block))
+    
+    b.new_transaction(origin="block", weights=global_weights.tolist(), bias=global_bias)
+    b.new_block(b.proof_of_work(b.last_block), b.hash(b.last_block))
+    
+    b.new_transaction(origin="block", weights=global_weights.tolist(), bias=global_bias)
+    b.new_block(b.proof_of_work(b.last_block), b.hash(b.last_block))
     return b
 
 
@@ -35,16 +40,20 @@ def blockchain_5blocks():
 def test_signature_verification(blockchain):
     pass
 
-# Test block validity
-# rubric section (b)
+# 
 def test_original_block_validity(blockchain):
+    """ Test block validity
+        rubric section (b)
+    """
     # test that block contains all necessary members
     block = blockchain.chain[-1]
     assert block == block_schema.validate(block)
 
-# Test proof of work
-# rubric section (c)
+# 
 def test_proof_of_work(blockchain):
+    """ Test proof of work
+        rubric section (c)
+    """
     proof = blockchain.proof_of_work(blockchain.last_block)
     assert proof != None
 
@@ -54,11 +63,10 @@ def test_conflict_resolution(blockchain, blockchain_5blocks):
         rubric section (d)
     """
     orig_chain_len = len(blockchain.chain)
-    print(orig_chain_len)
-    print(len(blockchain_5blocks.chain))
     blockchain.resolve_conflicts(blockchain_5blocks.chain)
     updated_chain_len = len(blockchain.chain)
-    print(updated_chain_len)
+
+    assert len(blockchain.chain) == len(blockchain_5blocks.chain)
     
 
 
