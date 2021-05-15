@@ -29,7 +29,7 @@ class Blockchain:
             block = chain[current_index]
 
             # Check that signature is correct for each transactino in the block
-            for transaction in block.current_transactions:
+            for transaction in block["transactions"]:
                 current = {
                             'origin': transaction["origin"],
                             'weights': transaction["weights"],
@@ -136,12 +136,12 @@ class Blockchain:
         signature = self.generate_transaction_signature(current,sender_private_key)
 
         current['signature'] =  str(binascii.hexlify(signature),'utf-8')
-        print(current['signature'])
+        #print(current['signature'])
 
         current['sender_public_key'] = str(sender_public_key.exportKey("PEM"),'utf-8')
-        print(current['sender_public_key'])
+        #print(current['sender_public_key'])
 
-        print(json.dumps(current))
+        #print(json.dumps(current))
 
         self.current_transactions.append(current)
 

@@ -14,8 +14,8 @@ def socket_send(ip, port, origin, name, type, sub_type, data, timeout=None):
         packet["type"] = type
         packet["sub_type"] = sub_type
         packet["data"] = data
-        print("\n\n\n" + name + "\n")
-        print(json.dumps(data) + "\n")
+        #print("\n\n\n" + name + "\n")
+        #print(json.dumps(data) + "\n")
 
         json_packet = json.dumps(packet) + "D3ADB33F"
         send_again = 1
