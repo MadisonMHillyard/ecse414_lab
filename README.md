@@ -55,4 +55,19 @@ To include a print out of results use the ```-s``` switch
 
 ### Test Descriptions
 
-1. 
+1. test_signature_verification:
+2. test_original_block_validity:
+   1. Tests for the correct formation of a block made by the blockchain class
+3. test_proof_of_work:
+   1. Tests that the mining process returns an integer
+   2. Tests that the mining process returns a value that is not None
+4. test_conflict_resolution:
+   1. Tests that on receipt of a correctly formatted chain containing more blocks, the blockchain class will correctly update the local chain to the incoming chain.
+   2. Tests that on the receipt of an incorrectly formatted chain containing more block, the blockchain will not update the local chain.
+   3. Tests that on the receipt of a chain containing fewer blocks, the blockchain will not update the local chain. 
+5. test_block_creation:
+   1. Tests that the new block has been appended to the blockchain
+   2. Tests that the new block contains the previous block's hash
+6. test_create_transaction:
+   1. Tests that the new transaction has been appended to the transaction list
+   2. Tests that the new transaction contains the updated gradients
