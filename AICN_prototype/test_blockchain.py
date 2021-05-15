@@ -1,5 +1,6 @@
 import pytest
 from blockchain import Blockchain
+from generate_keypair import generate_keypair
 import numpy
 from schema import Schema, And, Use
 
@@ -7,6 +8,9 @@ from schema import Schema, And, Use
 origin = "test_node"
 global_weights = numpy.zeros((2*2, 1))
 global_bias = 0
+
+(private_key_1, public_key_1) = generate_keypair(1024,"test1_public.pem", "test1_private.pem")
+(private_key_2, public_key_2) = generate_keypair(1024,"test2_public.pem", "test2_private.pem")
 
 # block variables
 proof = 100
@@ -19,42 +23,68 @@ block_schema = Schema({'index': int,
 @pytest.fixture
 def blockchain():
     return Blockchain()
+    
 @pytest.fixture
-def blockchain_invalid_chain():
+def blockchain_invalid_signature_chain():
     b = Blockchain() # init sequence creates initial block
-    b.new_transaction(origin="block", weights=global_weights.tolist(), bias=global_bias)
+
+    b.new_transaction(origin="block", weights=global_weights.tolist(), bias=global_bias, sender_public_key=public_key_1, sender_private_key=private_key_2)
+    b.new_block(b.proof_of_work(b.last_block), b.hash(b.last_block))
+    b.new_transaction(origin="block", weights=global_weights.tolist(), bias=global_bias, sender_public_key=public_key_1, sender_private_key=private_key_2)
+    b.new_block(b.proof_of_work(b.last_block), b.hash(b.last_block))
+    
+    b.new_transaction(origin="block", weights=global_weights.tolist(), bias=global_bias, sender_public_key=public_key_1, sender_private_key=private_key_2)
+    b.new_block(b.proof_of_work(b.last_block), b.hash(b.last_block))
+    
+    b.new_transaction(origin="block", weights=global_weights.tolist(), bias=global_bias, sender_public_key=public_key_1, sender_private_key=private_key_2)
+    b.new_block(b.proof_of_work(b.last_block), b.hash(b.last_block))
+    return b
+
+@pytest.fixture
+def blockchain_invalid_hash_chain():
+    b = Blockchain() # init sequence creates initial block
+
+    b.new_transaction(origin="block", weights=global_weights.tolist(), bias=global_bias, sender_public_key=public_key_1, sender_private_key=private_key_1)
     b.new_block(0, b.hash(b.last_block))
-    b.new_transaction(origin="block", weights=global_weights.tolist(), bias=global_bias)
+    b.new_transaction(origin="block", weights=global_weights.tolist(), bias=global_bias, sender_public_key=public_key_1, sender_private_key=private_key_1)
     b.new_block(0, b.hash(b.last_block))
     
-    b.new_transaction(origin="block", weights=global_weights.tolist(), bias=global_bias)
+    b.new_transaction(origin="block", weights=global_weights.tolist(), bias=global_bias, sender_public_key=public_key_1, sender_private_key=private_key_1)
     b.new_block(0, b.hash(b.last_block))
     
-    b.new_transaction(origin="block", weights=global_weights.tolist(), bias=global_bias)
+    b.new_transaction(origin="block", weights=global_weights.tolist(), bias=global_bias, sender_public_key=public_key_1, sender_private_key=private_key_1)
     b.new_block(0, b.hash(b.last_block))
     return b
+
+
 @pytest.fixture
 def blockchain_5blocks():
     b = Blockchain() # init sequence creates initial block
-    b.new_transaction(origin="block", weights=global_weights.tolist(), bias=global_bias)
+
+    b.new_transaction(origin="block", weights=global_weights.tolist(), bias=global_bias, sender_public_key=public_key_1, sender_private_key=private_key_1)
     b.new_block(b.proof_of_work(b.last_block), b.hash(b.last_block))
-    b.new_transaction(origin="block", weights=global_weights.tolist(), bias=global_bias)
-    b.new_block(b.proof_of_work(b.last_block), b.hash(b.last_block))
-    
-    b.new_transaction(origin="block", weights=global_weights.tolist(), bias=global_bias)
+    b.new_transaction(origin="block", weights=global_weights.tolist(), bias=global_bias, sender_public_key=public_key_1, sender_private_key=private_key_1)
     b.new_block(b.proof_of_work(b.last_block), b.hash(b.last_block))
     
-    b.new_transaction(origin="block", weights=global_weights.tolist(), bias=global_bias)
+    b.new_transaction(origin="block", weights=global_weights.tolist(), bias=global_bias, sender_public_key=public_key_1, sender_private_key=private_key_1)
+    b.new_block(b.proof_of_work(b.last_block), b.hash(b.last_block))
+    
+    b.new_transaction(origin="block", weights=global_weights.tolist(), bias=global_bias, sender_public_key=public_key_1, sender_private_key=private_key_1)
     b.new_block(b.proof_of_work(b.last_block), b.hash(b.last_block))
     return b
 
 
-def test_signature_verification(blockchain):
+def test_signature_verification(blockchain, blockchain_invalid_signature_chain):
     """ Test signature verification
         rubric section(a)
     """
-    pass
-
+    valid_chain_len = len(blockchain.chain)
+    invalid_chain_len = len(blockchain_invalid_signature_chain.chain)
+    
+    # test with larger, incorrectly formed chain
+    blockchain.resolve_conflicts(blockchain_invalid_signature_chain.chain)
+    assert valid_chain_len != invalid_chain_len
+    
 
 def test_original_block_validity(blockchain):
     """ Test block validity
@@ -75,16 +105,16 @@ def test_proof_of_work(blockchain):
     
 
 
-def test_conflict_resolution(blockchain, blockchain_5blocks, blockchain_invalid_chain):
+def test_conflict_resolution(blockchain, blockchain_5blocks, blockchain_invalid_hash_chain):
     """ Test conflict resolution
         rubric section (d)
     """
     short_chain_len = len(blockchain.chain)
     large_chain_len = len(blockchain_5blocks.chain)
-    invalid_chain_len = len(blockchain_invalid_chain.chain)
+    invalid_chain_len = len(blockchain_invalid_hash_chain.chain)
     
     # test with larger, incorrectly formed chain
-    blockchain.resolve_conflicts(blockchain_invalid_chain.chain)
+    blockchain.resolve_conflicts(blockchain_invalid_hash_chain.chain)
     assert short_chain_len != invalid_chain_len
 
     # test with smaller, correctly formed chain
@@ -97,8 +127,6 @@ def test_conflict_resolution(blockchain, blockchain_5blocks, blockchain_invalid_
     updated_chain_len = len(blockchain.chain)
     assert updated_chain_len == large_chain_len
 
-    
-    
 
 
 def test_block_creation(blockchain):
@@ -121,7 +149,7 @@ def test_create_transaction(blockchain):
         rubric section (f)
     """
     t_list = len(blockchain.current_transactions)
-    blockchain.new_transaction(origin=origin, weights=global_weights.tolist(), bias=global_bias)
+    blockchain.new_transaction(origin="block", weights=global_weights.tolist(), bias=global_bias, sender_public_key=public_key_1, sender_private_key=private_key_1)
     t_list2 = len(blockchain.current_transactions)
 
     # assert that the new transaction has been added to transaction list
