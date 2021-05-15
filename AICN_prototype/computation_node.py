@@ -100,9 +100,6 @@ class Listener(threading.Thread):
             if json_msg["type"] == "broadcast":
                 if json_msg['sub_type'] == "blockchain":
 
-                    # 
-                    # json_msg['data'].
-
                     # got a blockchain from someone else... resolve
                     logger.debug(self.parent.name + " started to resolve blockchain from " + json_msg['name'])
 

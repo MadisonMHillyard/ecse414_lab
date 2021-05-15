@@ -28,6 +28,22 @@ class Blockchain:
         while current_index < len(chain):
             block = chain[current_index]
 
+            # Check that signature is correct for each transactino in the block
+            for transaction in block.current_transactions:
+                current = {
+                            'origin': transaction["origin"],
+                            'weights': transaction["weights"],
+                            'bias': transaction["bias"]
+                        }
+                signature = binascii.unhexlify(bytes(transaction["signature"],'utf-8'))
+                sender_public_key = bytes(transaction['sender_public_key'], 'utf-8')
+                if not self.verify_transaction_signature(current, signature, sender_public_key):
+                    print("Transaction signature wasnt valid")
+                    raise NameError("transaction must have a valid signature")
+                    return False
+                print("Transaction signature was valid")
+
+
             # Check that the hash of the block is correct
             last_block_hash = self.hash(last_block)
             if block['previous_hash'] != last_block_hash:
