@@ -1,6 +1,10 @@
 import hashlib
 import json
 from time import time
+import binascii
+from Crypto.Signature import PKCS1_v1_5
+from Crypto.PublicKey import RSA
+from Crypto.Hash import SHA
 
 
 class Blockchain:
@@ -86,22 +90,47 @@ class Blockchain:
         self.chain.append(block)
         return block
 
-    def new_transaction(self, origin, weights, bias):
+    def generate_transaction_signature(self, transaction_data, sender_private_key):
+        signature_source_data = SHA.new(str(transaction_data).encode('utf8'))
+        signer = PKCS1_v1_5.new(sender_private_key)
+        signature = signer.sign(signature_source_data)
+        return signature
+
+    def verify_transaction_signature(self, transaction_data, transaction_signature, sender_public_key):
+        public_key = RSA.importKey(sender_public_key)
+        verifier = PKCS1_v1_5.new(public_key)
+        expected_signature_source_data = SHA.new(str(transaction_data).encode('utf8'))
+        verification_result = verifier.verify(expected_signature_source_data, transaction_signature)
+        return verification_result
+
+    def new_transaction(self, origin, weights, bias, sender_public_key, sender_private_key):
         """
         Creates a new transaction to go into the next mined Block
-        :param sender: Address of the Sender
-        :param recipient: Address of the Recipient
-        :param amount: Amount
+        :param self: 
+        :param origin:
+        :param weights:
+        :param bias: 
         :return: The index of the Block that will hold this transaction
         """
-        self.current_transactions.append({
+        current = {
             'origin': origin,
             'weights': weights,
             'bias': bias
-        })
+        }
+        signature = self.generate_transaction_signature(current,sender_private_key)
+
+        current['signature'] =  str(binascii.hexlify(signature),'utf-8')
+        print(current['signature'])
+
+        current['sender_public_key'] = str(sender_public_key.exportKey("PEM"),'utf-8')
+        print(current['sender_public_key'])
+
+        print(json.dumps(current))
+
+        self.current_transactions.append(current)
 
         return self.last_block['index'] + 1
-
+    
     @property
     def last_block(self):
         return self.chain[-1]

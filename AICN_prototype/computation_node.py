@@ -1,3 +1,5 @@
+import binascii
+from generate_keypair import generate_keypair
 import threading
 import socket
 import json
@@ -97,8 +99,13 @@ class Listener(threading.Thread):
         elif json_msg["origin"] == "node":
             if json_msg["type"] == "broadcast":
                 if json_msg['sub_type'] == "blockchain":
+
+                    # 
+                    # json_msg['data'].
+
                     # got a blockchain from someone else... resolve
                     logger.debug(self.parent.name + " started to resolve blockchain from " + json_msg['name'])
+
                     if self.parent.blockchain.resolve_conflicts(json_msg['data']):
                         logger.debug(self.parent.name + " resolve accepted incoming blockchain from " +
                                      json_msg['name'])
@@ -116,10 +123,13 @@ class ComputationNode(threading.Thread):
         # initialization of node thread
         threading.Thread.__init__(self)
 
+        # generate a public and private keypair to use for this computation node
+        (self.private_key, self.public_key) = generate_keypair(1024,"public"+str(index)+".pem", "private"+str(index)+".pem")
+    
         # store index by order created
         self.index = index
         self.origin = "node"
-        self.name = self.origin + " " + str(random.randint(1, 1e6))
+        self.name = self.origin + " " + str(random.randint(1, 1e6)) 
         self.aicn_registry_ip = aicn_registry_ip
         self.aicn_registry_port = aicn_registry_port
 
@@ -127,7 +137,7 @@ class ComputationNode(threading.Thread):
         # self.blockchain = 0
         self.gradient = sys.maxsize
         self.global_gradient = sys.maxsize
-        self.global_weights = numpy.zeros((256*256, 1))
+        self.global_weights = numpy.zeros((2*2, 1))
         self.global_bias = 0
 
         # peer list (publishers/nodes/nodepubs)
@@ -166,8 +176,9 @@ class ComputationNode(threading.Thread):
                         self.average_gradients()
                         self.blockchain.new_transaction(origin=self.origin,
                                                         weights=self.global_weights.tolist(),
-                                                        bias=self.global_bias)
-
+                                                        bias=self.global_bias,
+                                                        sender_public_key=self.public_key,
+                                                        sender_private_key=self.private_key)
                         # Forge the new Block by adding it to the chain
                         previous_hash = self.blockchain.hash(self.blockchain.last_block)
                         self.blockchain.new_block(self.proof, previous_hash)
