@@ -36,11 +36,14 @@ def blockchain_5blocks():
     return b
 
 
-# Test signature verification
+# 
 def test_signature_verification(blockchain):
+    """ Test signature verification
+        rubric section(a)
+    """
     pass
 
-# 
+
 def test_original_block_validity(blockchain):
     """ Test block validity
         rubric section (b)
@@ -49,7 +52,7 @@ def test_original_block_validity(blockchain):
     block = blockchain.chain[-1]
     assert block == block_schema.validate(block)
 
-# 
+
 def test_proof_of_work(blockchain):
     """ Test proof of work
         rubric section (c)
@@ -57,7 +60,7 @@ def test_proof_of_work(blockchain):
     proof = blockchain.proof_of_work(blockchain.last_block)
     assert proof != None
 
-# 
+
 def test_conflict_resolution(blockchain, blockchain_5blocks):
     """ Test conflict resolution
         rubric section (d)
