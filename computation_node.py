@@ -1,15 +1,15 @@
 import binascii
-from generate_keypair import generate_keypair
+from common.generate_keypair import generate_keypair
 import threading
 import socket
 import json
 import time
-import net_util
+from common import net_util
 import logging
-import log_util
+from common import log_util
 import sys
 import random
-from blockchain import Blockchain
+from common.blockchain import Blockchain
 import numpy
 
 

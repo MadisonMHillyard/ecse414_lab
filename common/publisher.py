@@ -3,10 +3,10 @@ import socket
 import random
 import time
 import json
-import net_util
+from common import net_util
 import logging
-import log_util
-from blockchain import Blockchain
+from common import log_util
+from common.blockchain import Blockchain
 import numpy
 import copy
 

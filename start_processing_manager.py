@@ -1,7 +1,7 @@
 import sys
 import os
 import logging
-import log_util
+from common import log_util
 import json
 from pathlib import Path
 # pip install Pillow
@@ -14,7 +14,7 @@ import random
 logger = log_util.get_logger("logs/aicn_log.txt")
 logger.setLevel(logging.DEBUG)
 
-from publisher import Publisher
+from common.publisher import Publisher
 from computation_node import ComputationNode
 
 # Globals
