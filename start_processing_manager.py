@@ -15,7 +15,7 @@ logger = log_util.get_logger("logs/aicn_log.txt")
 logger.setLevel(logging.DEBUG)
 
 from common.publisher import Publisher
-from computation_node import ComputationNode
+from processing_node import ComputationNode
 
 # Globals
 aicn_registry_filename = "logs/registry_info.txt"
