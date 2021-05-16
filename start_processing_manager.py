@@ -1,7 +1,7 @@
 import sys
 import os
 import logging
-from common import log_util
+from src.common import log_util
 import json
 from pathlib import Path
 # pip install Pillow
@@ -14,8 +14,8 @@ import random
 logger = log_util.get_logger("logs/aicn_log.txt")
 logger.setLevel(logging.DEBUG)
 
-from common.publisher import Publisher
-from processing_node import ComputationNode
+from src.common.publisher import Publisher
+from src.processing_node import ComputationNode
 
 # Globals
 aicn_registry_filename = "logs/registry_info.txt"

@@ -1,4 +1,4 @@
-from registry import AICN_Registry
+from src.registry import AICN_Registry
 
 
 def main():

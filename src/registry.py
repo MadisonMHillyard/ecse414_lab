@@ -1,9 +1,9 @@
 import threading
 import socket
-from common import log_util
+from src.common import log_util
 import logging
 import json
-from common import net_util
+from src.common import net_util
 
 # Globals
 aicn_registry_filename = "logs/registry_info.txt"

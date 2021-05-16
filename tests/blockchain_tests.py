@@ -1,7 +1,7 @@
 from numpy.core.shape_base import block
 import pytest
-from common.blockchain import Blockchain
-from common.generate_keypair import generate_keypair
+from src.common.blockchain import Blockchain
+from src.common.generate_keypair import generate_keypair
 import numpy
 from schema import Schema, And, Use
 
