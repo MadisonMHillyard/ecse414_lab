@@ -6,10 +6,10 @@ import json
 import net_util
 
 # Globals
-aicn_registry_filename = "aicn_registry_info.txt"
+aicn_registry_filename = "logs/registry_info.txt"
 
 # logger setup
-logger = log_util.get_logger("aicn_registry_log.txt")
+logger = log_util.get_logger("logs/registry_log.txt")
 logger.setLevel(logging.INFO)
 
 class AICN_Registry(threading.Thread):

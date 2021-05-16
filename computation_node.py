@@ -14,7 +14,7 @@ import numpy
 
 
 # logger setup
-logger = log_util.get_logger("node_log.txt")
+logger = log_util.get_logger("logs/node_log.txt")
 logger.setLevel(logging.DEBUG)
 
 
@@ -121,7 +121,7 @@ class ComputationNode(threading.Thread):
         threading.Thread.__init__(self)
 
         # generate a public and private keypair to use for this computation node
-        (self.private_key, self.public_key) = generate_keypair(1024,"public"+str(index)+".pem", "private"+str(index)+".pem")
+        (self.private_key, self.public_key) = generate_keypair(1024,"keys/public"+str(index)+".pem", "keys/private"+str(index)+".pem")
     
         # store index by order created
         self.index = index

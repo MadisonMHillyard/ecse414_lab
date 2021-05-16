@@ -1,14 +1,14 @@
 import sys
 from Crypto.PublicKey import RSA
 
-def generate_private_key(bits=1024, private_pem_output_path="private.pem"):
+def generate_private_key(bits=1024, private_pem_output_path="keys/private.pem"):
     key = RSA.generate(bits)
     f = open(private_pem_output_path, "wb")
     f.write(key.exportKey('PEM'))
     f.close()
     return key
 
-def generate_public_key(private_pem_path="private.pem", public_pem_output_path="public.pem"):
+def generate_public_key(private_pem_path="keys/private.pem", public_pem_output_path="keys/public.pem"):
     f = open(private_pem_path, "rb")
     key = RSA.importKey(f.read())
     pubkey = key.publickey()
@@ -18,7 +18,7 @@ def generate_public_key(private_pem_path="private.pem", public_pem_output_path="
     return pubkey
 
 
-def generate_keypair(bits=1024, private_pem_output_path="private.pem", public_pem_output_path="public.pem"):
+def generate_keypair(bits=1024, private_pem_output_path="keys/private.pem", public_pem_output_path="keys/public.pem"):
     return generate_private_key(bits, private_pem_output_path), generate_public_key(private_pem_output_path,public_pem_output_path)
 
 def main():

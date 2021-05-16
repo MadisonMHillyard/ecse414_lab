@@ -2,15 +2,12 @@
 __MACOSX/
 __pycache__/
 env/
+logs/*
+
 # ignore 
-AICN_prototype/aicn_registry_log.txt
-AICN_prototype/aicn_registry_info.txt
-AICN_prototype/aicn_log.txt
-AICN_prototype/logs/PC1/.DS_Store
-AICN_prototype/logs/PC2/.DS_Store
-AICN_prototype/logs/registry/.DS_Store
-AICN_prototype/.DS_Store
 *.pem
 
-
+# except
+!logs/.gitkeep
+!keys/.gitkeep
 

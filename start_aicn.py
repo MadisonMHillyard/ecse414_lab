@@ -11,14 +11,14 @@ import numpy
 import random
 
 # logger setup
-logger = log_util.get_logger("aicn_log.txt")
+logger = log_util.get_logger("logs/aicn_log.txt")
 logger.setLevel(logging.DEBUG)
 
 from publisher import Publisher
 from computation_node import ComputationNode
 
 # Globals
-aicn_registry_filename = "aicn_registry_info.txt"
+aicn_registry_filename = "logs/registry_info.txt"
 
 # gather aicn ip and port
 if len(sys.argv) == 3:

@@ -10,8 +10,8 @@ origin = "test_node"
 global_weights = numpy.zeros((2*2, 1))
 global_bias = 0
 
-(private_key_1, public_key_1) = generate_keypair(1024,"test1_public.pem", "test1_private.pem")
-(private_key_2, public_key_2) = generate_keypair(1024,"test2_public.pem", "test2_private.pem")
+(private_key_1, public_key_1) = generate_keypair(1024,"keys/test1_public.pem", "keys/test1_private.pem")
+(private_key_2, public_key_2) = generate_keypair(1024,"keys/test2_public.pem", "keys/test2_private.pem")
 
 # block variables
 proof = 100
